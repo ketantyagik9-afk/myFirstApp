@@ -1,0 +1,11 @@
+.expo/
+node_modules/
+myFirstApp/
+dist/
+web-build/
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+expo-*.log
+.android-build-*.log
+emulator-*.png

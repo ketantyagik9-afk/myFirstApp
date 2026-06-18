@@ -1,0 +1,59 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function fileNameContainsUid(fileName) {
+      return signedIn() && fileName.matches('.*' + request.auth.uid + '.*');
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isAudio() {
+      return request.resource.contentType.matches('audio/.*')
+        || request.resource.contentType == 'application/octet-stream';
+    }
+
+    match /profilePhotos/{userId}/{fileName} {
+      allow read: if signedIn();
+
+      allow create, update: if signedIn()
+        && request.auth.uid == userId
+        && isImage()
+        && request.resource.size <= 6 * 1024 * 1024;
+
+      allow delete: if signedIn() && request.auth.uid == userId;
+    }
+
+    match /chatImages/{fileName} {
+      allow read: if signedIn();
+
+      allow create, update: if signedIn()
+        && fileNameContainsUid(fileName)
+        && isImage()
+        && request.resource.size <= 8 * 1024 * 1024;
+
+      allow delete: if signedIn() && fileNameContainsUid(fileName);
+    }
+
+    match /chatAudio/{fileName} {
+      allow read: if signedIn();
+
+      allow create, update: if signedIn()
+        && fileNameContainsUid(fileName)
+        && isAudio()
+        && request.resource.size <= 8 * 1024 * 1024;
+
+      allow delete: if signedIn() && fileNameContainsUid(fileName);
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
