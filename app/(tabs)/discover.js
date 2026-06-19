@@ -761,6 +761,7 @@ export default function DiscoverScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSwiping, setIsSwiping] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
+  const [moveVisible, setMoveVisible] = useState(false);
   const [vibeFallbackText, setVibeFallbackText] = useState("");
   const [preferenceFallbackText, setPreferenceFallbackText] = useState("");
   const [draftCulturalPreference, setDraftCulturalPreference] = useState("any");
@@ -1061,6 +1062,24 @@ export default function DiscoverScreen() {
       );
     } catch (error) {
       showError("Join failed", error);
+    }
+  };
+
+  const MOVE_OPTIONS = [
+    { emoji: "😍", label: "You're cute" },
+    { emoji: "🤝", label: "Want to be friends" },
+    { emoji: "❤️", label: "I like you" },
+    { emoji: "☕", label: "Coffee?" },
+    { emoji: "🌙", label: "Let's go out" },
+    { emoji: "⭐", label: "Super Yeah" },
+  ];
+
+  const handleMakeMove = async (option) => {
+    setMoveVisible(false);
+    if (option.label === "Super Yeah") {
+      swipeSuperYeah();
+    } else {
+      await handleYeah();
     }
   };
 
@@ -1701,26 +1720,12 @@ export default function DiscoverScreen() {
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            gap: 24,
+            gap: 16,
             paddingBottom: 18,
+            paddingHorizontal: 20,
             opacity: isSwiping ? 0.6 : 1,
           }}
         >
-          <TouchableOpacity
-            onPress={handleUndo}
-            disabled={lastSwipedIndex === null || isSwiping}
-            style={[actionButton, { display: "none" }]}
-          >
-            <Text
-              style={{
-                fontSize: 22,
-                opacity: lastSwipedIndex === null ? 0.35 : 1,
-              }}
-            >
-              ↩️
-            </Text>
-          </TouchableOpacity>
-
           <TouchableOpacity
             onPress={swipeNah}
             disabled={isSwiping}
@@ -1732,54 +1737,23 @@ export default function DiscoverScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={swipeSuperYeah}
-            disabled={isSwiping}
-            style={[
-              actionButton,
-              {
-                backgroundColor: COLORS.softCard,
-              },
-            ]}
-          >
-            <Text style={{ fontSize: 24 }}>⭐</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={handleJoinPlan}
+            onPress={() => setMoveVisible(true)}
             disabled={isSwiping}
             style={{
-              display: "none",
-              height: 56,
+              flex: 1,
+              height: 58,
               borderRadius: 999,
-              backgroundColor: COLORS.teal,
+              backgroundColor: COLORS.rose,
               justifyContent: "center",
               alignItems: "center",
-              paddingHorizontal: 16,
+              shadowColor: COLORS.rose,
+              shadowOpacity: 0.28,
+              shadowRadius: 18,
+              shadowOffset: { width: 0, height: 6 },
             }}
           >
-            <Text style={{ color: COLORS.white, fontWeight: "900", fontSize: 13 }}>
-              Join 🤝
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={swipeYeah}
-            disabled={isSwiping}
-            style={[
-              actionButton,
-              {
-                width: 70,
-                height: 70,
-                borderRadius: 35,
-                backgroundColor: COLORS.rose,
-                shadowColor: COLORS.rose,
-                shadowOpacity: 0.28,
-                shadowRadius: 18,
-              },
-            ]}
-          >
-            <Text style={{ fontSize: 30, fontWeight: "900", color: COLORS.white }}>
-              ♥
+            <Text style={{ fontSize: 17, fontWeight: "900", color: COLORS.white }}>
+              Make a Move 🔥
             </Text>
           </TouchableOpacity>
         </View>
@@ -1917,6 +1891,77 @@ export default function DiscoverScreen() {
             >
               <Text style={{ color: COLORS.black, fontWeight: "900", fontSize: 16 }}>
                 Close
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        transparent
+        visible={moveVisible}
+        animationType="slide"
+        onRequestClose={() => setMoveVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.45)",
+            justifyContent: "flex-end",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: COLORS.softCard,
+              borderTopLeftRadius: 34,
+              borderTopRightRadius: 34,
+              padding: 24,
+              paddingBottom: 40,
+            }}
+          >
+            <Text style={{ fontSize: 26, fontWeight: "900", color: COLORS.black, marginBottom: 6 }}>
+              Make a Move 🔥
+            </Text>
+            <Text style={{ color: COLORS.darkBlueGray, fontWeight: "700", marginBottom: 20 }}>
+              What's your vibe with {currentUser?.name || "this person"}?
+            </Text>
+
+            {MOVE_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={option.label}
+                onPress={() => handleMakeMove(option)}
+                activeOpacity={0.82}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  backgroundColor: COLORS.background,
+                  borderRadius: 18,
+                  paddingVertical: 16,
+                  paddingHorizontal: 18,
+                  marginBottom: 10,
+                  borderWidth: 1,
+                  borderColor: COLORS.softBorder,
+                }}
+              >
+                <Text style={{ fontSize: 26, marginRight: 14 }}>{option.emoji}</Text>
+                <Text style={{ fontSize: 17, fontWeight: "800", color: COLORS.black }}>
+                  {option.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+
+            <TouchableOpacity
+              onPress={() => setMoveVisible(false)}
+              style={{
+                marginTop: 6,
+                backgroundColor: COLORS.elevatedCard,
+                borderRadius: 999,
+                paddingVertical: 15,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: COLORS.black, fontWeight: "900", fontSize: 16 }}>
+                Cancel
               </Text>
             </TouchableOpacity>
           </View>
