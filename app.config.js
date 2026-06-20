@@ -2,7 +2,7 @@
 
 const revenueCat = expo.extra?.revenueCat || {};
 const PRODUCTION_REVENUECAT_APPLE_API_KEY =
-  "appl_uAy1AiUuhksrIgIDoUnqxskrNFM";
+  "appl_uAylAiUuhksrIgIDoUnqxskrNFM";
 
 function getRevenueCatAppleApiKey() {
   const envKey = process.env.EXPO_PUBLIC_REVENUECAT_APPLE_API_KEY;

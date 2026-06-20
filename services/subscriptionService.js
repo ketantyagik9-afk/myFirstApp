@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
 
 const revenueCatConfig = Constants?.expoConfig?.extra?.revenueCat || {};
-const FALLBACK_APPLE_API_KEY = "appl_uAy1AiUuhksrIgIDoUnqxskrNFM";
+const FALLBACK_APPLE_API_KEY = "appl_uAylAiUuhksrIgIDoUnqxskrNFM";
 
 const ENTITLEMENT_ID = revenueCatConfig.entitlementId || "cliqzee_plus";
 const ACCEPTED_ENTITLEMENT_IDS = [
