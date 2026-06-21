@@ -1752,18 +1752,29 @@ export default function DiscoverScreen() {
               flex: 1,
               height: 58,
               borderRadius: 999,
-              backgroundColor: COLORS.rose,
-              justifyContent: "center",
-              alignItems: "center",
+              overflow: "hidden",
               shadowColor: COLORS.rose,
               shadowOpacity: 0.28,
               shadowRadius: 18,
               shadowOffset: { width: 0, height: 6 },
+              elevation: 4,
             }}
           >
-            <Text style={{ fontSize: 17, fontWeight: "900", color: COLORS.white }}>
-              Make a Move 🔥
-            </Text>
+            <LinearGradient
+              colors={[COLORS.rose, COLORS.teal]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 999,
+              }}
+            >
+              <Text style={{ fontSize: 17, fontWeight: "900", color: COLORS.white }}>
+                Make a Move 🔥
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       )}
