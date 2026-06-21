@@ -1750,7 +1750,7 @@ export default function DiscoverScreen() {
             disabled={isSwiping}
             style={{
               flex: 1,
-              height: 58,
+              height: 46,
               borderRadius: 999,
               overflow: "hidden",
               shadowColor: COLORS.rose,
@@ -1771,7 +1771,7 @@ export default function DiscoverScreen() {
                 borderRadius: 999,
               }}
             >
-              <Text style={{ fontSize: 17, fontWeight: "900", color: COLORS.white }}>
+              <Text style={{ fontSize: 14, fontWeight: "900", color: COLORS.white }}>
                 Make a Move 🔥
               </Text>
             </LinearGradient>
