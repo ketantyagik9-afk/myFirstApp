@@ -119,6 +119,7 @@ export default function ProfileScreen() {
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  const [privacyVisible, setPrivacyVisible] = useState(false);
   const [profile, setProfile] = useState({
     name: "",
     age: "",
@@ -134,6 +135,7 @@ export default function ProfileScreen() {
     verified: false,
     verificationStatus: "",
     verificationPhotoURL: "",
+    photoVisibility: "everyone",
   });
   const fadeAnim = useState(new Animated.Value(0))[0];
   const slideAnim = useState(new Animated.Value(20))[0];
@@ -180,6 +182,7 @@ export default function ProfileScreen() {
         verified: !!data.verified,
         verificationStatus: data.verificationStatus || "",
         verificationPhotoURL: data.verificationPhotoURL || "",
+        photoVisibility: data.photoVisibility || "everyone",
       });
 
       const adminCheck = await isCurrentUserAdmin(currentUserId);
@@ -553,6 +556,7 @@ export default function ProfileScreen() {
   photo?.startsWith("https://")
 ),
           bio: cleanText(profile.bio),
+          photoVisibility: profile.photoVisibility || "everyone",
           updatedAt: new Date(),
         },
         { merge: true }
@@ -717,6 +721,41 @@ export default function ProfileScreen() {
             </Text>
           </View>
         </View>
+
+        <TouchableOpacity
+          onPress={() => setPrivacyVisible(true)}
+          style={{
+            marginTop: 16,
+            backgroundColor: COLORS.softCard,
+            borderRadius: 999,
+            paddingVertical: 14,
+            paddingHorizontal: 20,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            borderWidth: 1,
+            borderColor: COLORS.softBorder,
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={{ fontSize: 18, marginRight: 10 }}>
+              {profile.photoVisibility === "blurred" ? "🔒" : profile.photoVisibility === "matches" ? "💬" : "🌐"}
+            </Text>
+            <View>
+              <Text style={{ color: COLORS.white, fontWeight: "900", fontSize: 15 }}>
+                Photo Privacy
+              </Text>
+              <Text style={{ color: COLORS.darkBlueGray, fontSize: 12, marginTop: 2 }}>
+                {profile.photoVisibility === "blurred"
+                  ? "Blurred for everyone"
+                  : profile.photoVisibility === "matches"
+                  ? "Visible only to matches"
+                  : "Visible to everyone"}
+              </Text>
+            </View>
+          </View>
+          <Text style={{ color: COLORS.darkBlueGray, fontSize: 18 }}>›</Text>
+        </TouchableOpacity>
 
         <View style={{ marginTop: 22 }}>
             <Text style={{ fontSize: 18, fontWeight: "900", color: COLORS.black }}>
@@ -1247,6 +1286,77 @@ export default function ProfileScreen() {
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
+      </Modal>
+
+      <Modal
+        visible={privacyVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setPrivacyVisible(false)}
+      >
+        <View style={modalBackdrop}>
+          <View style={modalSheet}>
+            <Text style={modalTitle}>Photo Privacy 🔒</Text>
+            <Text style={{ color: COLORS.darkBlueGray, marginTop: 6, marginBottom: 18 }}>
+              Choose who can see your photos clearly.
+            </Text>
+
+            {[
+              { key: "everyone", emoji: "🌐", label: "Visible to everyone", desc: "All users can see your photos." },
+              { key: "blurred", emoji: "🔒", label: "Blurred for everyone", desc: "Photos are blurred for all users." },
+              { key: "matches", emoji: "💬", label: "Visible only to matches", desc: "Only your matches can see your photos." },
+            ].map((option) => (
+              <TouchableOpacity
+                key={option.key}
+                onPress={() => {
+                  updateField("photoVisibility", option.key);
+                  setPrivacyVisible(false);
+                  setDoc(
+                    doc(db, "users", auth.currentUser.uid),
+                    { photoVisibility: option.key },
+                    { merge: true }
+                  ).catch(() => {});
+                }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  padding: 16,
+                  borderRadius: 20,
+                  marginBottom: 10,
+                  backgroundColor:
+                    profile.photoVisibility === option.key
+                      ? COLORS.pinkSoft
+                      : COLORS.background,
+                  borderWidth: 1,
+                  borderColor:
+                    profile.photoVisibility === option.key
+                      ? COLORS.rose
+                      : COLORS.softBorder,
+                }}
+              >
+                <Text style={{ fontSize: 26, marginRight: 14 }}>{option.emoji}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: COLORS.white, fontWeight: "900", fontSize: 16 }}>
+                    {option.label}
+                  </Text>
+                  <Text style={{ color: COLORS.darkBlueGray, fontSize: 13, marginTop: 2 }}>
+                    {option.desc}
+                  </Text>
+                </View>
+                {profile.photoVisibility === option.key && (
+                  <Ionicons name="checkmark-circle" size={22} color={COLORS.rose} />
+                )}
+              </TouchableOpacity>
+            ))}
+
+            <TouchableOpacity
+              onPress={() => setPrivacyVisible(false)}
+              style={closeButton}
+            >
+              <Text style={closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </Modal>
 
       <Modal

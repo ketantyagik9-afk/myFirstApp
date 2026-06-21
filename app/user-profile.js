@@ -345,12 +345,19 @@ export default function UserProfileScreen() {
       <View>
         <Image
           source={{ uri: activePhoto }}
+          blurRadius={user.photoVisibility === "blurred" ? 30 : 0}
           style={{
             width: "100%",
             height: 520,
             backgroundColor: "#dbe3ea",
           }}
         />
+        {user.photoVisibility === "blurred" && (
+          <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: 520, alignItems: "center", justifyContent: "center" }}>
+            <Text style={{ fontSize: 40 }}>🔒</Text>
+            <Text style={{ color: "#fff", fontWeight: "900", marginTop: 8, fontSize: 15 }}>Photo hidden</Text>
+          </View>
+        )}
 
         {photos.length > 1 && (
           <>

@@ -545,12 +545,21 @@ function ProfileCard({ user, myLocation, isBackCard = false }) {
     >
       <Image
         source={{ uri: activePhoto }}
+        blurRadius={user.photoVisibility === "blurred" || user.photoVisibility === "matches" ? 30 : 0}
         style={{
           width: "100%",
           height: CARD_IMAGE_HEIGHT,
           backgroundColor: COLORS.softBorder,
         }}
       />
+      {(user.photoVisibility === "blurred" || user.photoVisibility === "matches") && (
+        <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: CARD_IMAGE_HEIGHT, alignItems: "center", justifyContent: "center" }}>
+          <Text style={{ fontSize: 34 }}>🔒</Text>
+          <Text style={{ color: "#fff", fontWeight: "900", marginTop: 6, fontSize: 13 }}>
+            {user.photoVisibility === "matches" ? "Matches only" : "Photo hidden"}
+          </Text>
+        </View>
+      )}
 
       {!isBackCard && photos.length > 1 && (
         <>
