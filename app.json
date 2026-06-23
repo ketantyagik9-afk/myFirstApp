@@ -1,4 +1,4 @@
-﻿{
+{
   "expo": {
     "name": "Cliqzee",
     "slug": "myFirstApp",
@@ -11,13 +11,13 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.ketantyagi.myFirstApp",
-      "buildNumber": "25",
+      "buildNumber": "26",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "Allow camera access to take photos in chats.",
         "NSPhotoLibraryUsageDescription": "Allow photo access to send images in chats.",
         "NSMicrophoneUsageDescription": "Allow microphone access to send voice messages.",
-        "NSLocationWhenInUseUsageDescription": "Allow approximate location access to show nearby vibes and estimate distance."
+        "NSLocationWhenInUseUsageDescription": "CliqZee uses your location to show you people nearby. For example, it shows potential matches within 10km of your current location so you can connect with people around you."
       }
     },
     "android": {
@@ -86,4 +86,3 @@
     "owner": "ketantyagi"
   }
 }
-
