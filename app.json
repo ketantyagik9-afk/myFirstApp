@@ -9,9 +9,9 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "com.ketantyagi.myFirstApp",
-      "buildNumber": "26",
+      "buildNumber": "27",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "Allow camera access to take photos in chats.",
@@ -76,7 +76,7 @@
       "router": {},
       "revenueCat": {
         "entitlementId": "cliqzee_plus",
-        "appleApiKey": "appl_uAy1AiUuhksrIgIDoUnqxskrNFM",
+        "appleApiKey": "appl_uAylAiUuhksrIgIDoUnqxskrNFM",
         "googleApiKey": ""
       },
       "eas": {
