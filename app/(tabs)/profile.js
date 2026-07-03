@@ -38,6 +38,7 @@ import {
   requestPhotoVerification,
   uploadProfilePhoto,
 } from "../../services/userService";
+import { isCliqzeePlusActive } from "../../services/subscriptionService";
 
 function cleanText(value) {
   return (value || "").trim();
@@ -120,6 +121,7 @@ export default function ProfileScreen() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [privacyVisible, setPrivacyVisible] = useState(false);
+  const [isPlusUser, setIsPlusUser] = useState(false);
   const [profile, setProfile] = useState({
     name: "",
     age: "",
@@ -185,10 +187,14 @@ export default function ProfileScreen() {
         photoVisibility: data.photoVisibility || "everyone",
       });
 
-      const adminCheck = await isCurrentUserAdmin(currentUserId);
+      const [adminCheck, plusCheck] = await Promise.all([
+        isCurrentUserAdmin(currentUserId),
+        isCliqzeePlusActive(currentUserId).catch(() => false),
+      ]);
 
       if (auth.currentUser?.uid === currentUserId) {
         setIsAdmin(adminCheck);
+        setIsPlusUser(plusCheck);
       }
     } catch (error) {
       Alert.alert("Error", error?.message || "Could not load profile.");
@@ -1302,13 +1308,18 @@ export default function ProfileScreen() {
             </Text>
 
             {[
-              { key: "everyone", emoji: "🌐", label: "Visible to everyone", desc: "All users can see your photos." },
-              { key: "blurred", emoji: "🔒", label: "Blurred for everyone", desc: "Photos are blurred for all users." },
-              { key: "matches", emoji: "💬", label: "Visible only to matches", desc: "Only your matches can see your photos." },
+              { key: "everyone", emoji: "🌐", label: "Visible to everyone", desc: "All users can see your photos.", plus: false },
+              { key: "blurred", emoji: "🔒", label: "Blurred for everyone", desc: "Photos are blurred for all users.", plus: false },
+              { key: "matches", emoji: "💬", label: "Visible only to matches", desc: "Only your matches can see your photos.", plus: true },
             ].map((option) => (
               <TouchableOpacity
                 key={option.key}
                 onPress={() => {
+                  if (option.plus && !isPlusUser) {
+                    setPrivacyVisible(false);
+                    router.push("/plus");
+                    return;
+                  }
                   updateField("photoVisibility", option.key);
                   setPrivacyVisible(false);
                   setDoc(
@@ -1343,9 +1354,13 @@ export default function ProfileScreen() {
                     {option.desc}
                   </Text>
                 </View>
-                {profile.photoVisibility === option.key && (
+                {option.plus && !isPlusUser ? (
+                  <View style={{ backgroundColor: COLORS.rose, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999 }}>
+                    <Text style={{ color: COLORS.white, fontWeight: "900", fontSize: 11 }}>PLUS</Text>
+                  </View>
+                ) : profile.photoVisibility === option.key ? (
                   <Ionicons name="checkmark-circle" size={22} color={COLORS.rose} />
-                )}
+                ) : null}
               </TouchableOpacity>
             ))}
 
